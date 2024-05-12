@@ -11,4 +11,8 @@
 #define PIN_BAT_EN 4   // ADC使能引脚 GPIO4
 #define PIN_BAT_BIT 12 // ADC采样次数 0-4095
 
+// 定义GPS模块的引脚
+#define PIN_GPS_RX 22 // GPS模块RX
+#define PIN_GPS_TX 23 // GPS模块TX
+
 #endif
