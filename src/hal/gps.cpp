@@ -73,5 +73,8 @@ void displayInfo()
 void loop_gps()
 {
     while (gpsSerial.available() > 0)
+    {
+        // Serial.print((char)gpsSerial.read());
         gps.encode(gpsSerial.read());
+    }
 }

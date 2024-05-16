@@ -15,4 +15,10 @@
 #define PIN_GPS_RX 22 // GPS模块RX
 #define PIN_GPS_TX 23 // GPS模块TX
 
+// BLE
+#define BLE_NAME "Mini-Printer"
+// #define BLE_NAME "ESP32-MOTO"
+#define SERVICE_UUID "4fafc201-1fb5-459e-8fcc-c5c9c331914b"        // 自定义打印UUID
+#define CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8" // 自定义打印UUID
+
 #endif
