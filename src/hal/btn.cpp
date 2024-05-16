@@ -57,5 +57,4 @@ void setup_btn()
 void loop_btn()
 {
     check_btn();
-    delay(10);
 }

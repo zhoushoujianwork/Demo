@@ -1,9 +1,9 @@
 #include "em_task.h"
 #include "hal/led.h"
 #include "hal/btn.h"
-#include "hal/bat.h"
 #include "hal/gps.h"
 #include "hal/ble.h"
+#include "hal/bat.h"
 #include "hal/em_timer.h"
 
 void run_report()
@@ -35,24 +35,6 @@ void loop_btn(void *pvParameters)
     {
         loop_btn();
         vTaskDelay(10);
-    }
-}
-
-void loop_bat(void *pvParameters)
-{
-    for (;;) // A Task shall never return or exit.
-    {
-        loop_bat();
-        vTaskDelay(1000);
-    }
-}
-
-void loop_gps(void *pvParameters)
-{
-    for (;;) // A Task shall never return or exit.
-    {
-        displayInfo();
-        vTaskDelay(1000);
     }
 }
 
@@ -90,22 +72,6 @@ void init_task()
     xTaskCreate(
         loop_btn,   // 任务函数
         "BTN_TASK", // 任务名
-        1024 * 10,  // 任务栈
-        NULL,       // 任务参数
-        1,          // 任务优先级, with 3 (configMAX_PRIORITIES - 1) 是最高的，0是最低的.
-        NULL        // 任务句柄
-    );
-    xTaskCreate(
-        loop_bat,   // 任务函数
-        "BAT_TASK", // 任务名
-        1024 * 10,  // 任务栈
-        NULL,       // 任务参数
-        1,          // 任务优先级, with 3 (configMAX_PRIORITIES - 1) 是最高的，0是最低的.
-        NULL        // 任务句柄
-    );
-    xTaskCreate(
-        loop_gps,   // 任务函数
-        "GPS_TASK", // 任务名
         1024 * 10,  // 任务栈
         NULL,       // 任务参数
         1,          // 任务优先级, with 3 (configMAX_PRIORITIES - 1) 是最高的，0是最低的.
