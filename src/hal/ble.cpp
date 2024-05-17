@@ -17,7 +17,7 @@ void ble_report()
     {
         // 如果设备已连接则发送状态
         device_state_t *pdevice = get_device_state();
-        uint8_t status[4];
+        uint8_t status[5];
         status[0] = pdevice->battery;
         status[1] = pdevice->temperature;
         status[2] = pdevice->gps_state;
@@ -54,6 +54,7 @@ class bleCharacteristicCallbacks : public BLECharacteristicCallbacks
     void onRead(BLECharacteristic *pCharacteristic)
     { // 客户端读取事件回调函数
         Serial.println("触发读取事件");
+        read_gps();
     }
 
     void onWrite(BLECharacteristic *pCharacteristic)

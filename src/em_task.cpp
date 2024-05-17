@@ -4,6 +4,7 @@
 #include "hal/gps.h"
 #include "hal/ble.h"
 #include "hal/bat.h"
+#include "hal/gyro.h"
 #include "hal/em_timer.h"
 
 void run_report()
@@ -60,6 +61,7 @@ void init_task()
     setup_btn();
     setup_gps();
     setup_ble();
+    setup_gyro();
 
     xTaskCreate(
         loop_led,   // 任务函数

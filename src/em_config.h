@@ -12,7 +12,7 @@
 #define PIN_BAT_BIT 12 // ADC采样次数 0-4095
 
 // 定义GPS模块的引脚
-#define PIN_GPS_RX 22 // GPS模块RX
+#define PIN_GPS_RX 19 // GPS模块RX
 #define PIN_GPS_TX 23 // GPS模块TX
 
 // BLE
@@ -20,6 +20,6 @@
 // #define BLE_NAME "ESP32-MOTO"
 #define SERVICE_UUID "4fafc201-1fb5-459e-8fcc-c5c9c331914b"        // 自定义打印UUID
 #define CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8" // 自定义打印UUID
-#define BROADCAST_INTERVAL 200                                     // 广播间隔时间 单位毫秒
+#define BROADCAST_INTERVAL 10000                                   // 广播间隔时间 单位毫秒
 
 #endif
