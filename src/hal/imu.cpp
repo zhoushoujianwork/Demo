@@ -1,18 +1,14 @@
 // Basic demo for accelerometer readings from Adafruit MPU6050
-
+#include "imu.h"
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
 
 Adafruit_MPU6050 mpu;
+sensors_event_t a, g, temp;
 
-void setup_gyro(void)
+void setup_imu(void)
 {
-    Serial.begin(115200);
-    while (!Serial)
-        delay(10); // will pause Zero, Leonardo, etc until serial console opens
-
-    Serial.println("Adafruit MPU6050 test!");
 
     // Try to initialize!
     if (!mpu.begin())
@@ -43,7 +39,7 @@ void setup_gyro(void)
         break;
     }
     mpu.setGyroRange(MPU6050_RANGE_500_DEG);
-    Serial.print("Gyro range set to: ");
+    Serial.print("imu range set to: ");
     switch (mpu.getGyroRange())
     {
     case MPU6050_RANGE_250_DEG:
@@ -91,33 +87,31 @@ void setup_gyro(void)
     delay(100);
 }
 
-void read_gyro()
+void read_imu()
 {
-
-    /* Get new sensor events with the readings */
-    sensors_event_t a, g, temp;
     mpu.getEvent(&a, &g, &temp);
 
+    Serial.println();
     /* Print out the values */
+    // Acceleration 加速度
     Serial.print("Acceleration X: ");
     Serial.print(a.acceleration.x);
     Serial.print(", Y: ");
     Serial.print(a.acceleration.y);
     Serial.print(", Z: ");
     Serial.print(a.acceleration.z);
-    Serial.println(" m/s^2");
+    Serial.print(" m/s^2\t");
 
+    // imu 陀螺仪 角速度
     Serial.print("Rotation X: ");
     Serial.print(g.gyro.x);
     Serial.print(", Y: ");
     Serial.print(g.gyro.y);
     Serial.print(", Z: ");
     Serial.print(g.gyro.z);
-    Serial.println(" rad/s");
+    Serial.print(" rad/s\t");
 
     Serial.print("Temperature: ");
     Serial.print(temp.temperature);
-    Serial.println(" degC");
-
-    Serial.println("");
+    Serial.println(" degC\t");
 }

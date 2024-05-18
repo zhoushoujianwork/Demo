@@ -50,8 +50,9 @@ void check_btn()
 
 void setup_btn()
 {
-    Serial.begin(115200);
+    Serial.print(BtnPin);
     pinMode(BtnPin, INPUT);
+    Serial.println(" Button Ready");
 }
 
 void loop_btn()

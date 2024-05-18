@@ -52,16 +52,16 @@ void read_gps()
     // gps 卫星数量少于3个，改变状态
     if (get_device_state()->gps_data.satellites < 3)
     {
-        if (get_device_state()->gps_state == GPS_STATUS_NORMAL)
+        if (get_device_state()->gps_state == STATUS_NORMAL)
         {
-            get_device_state()->gps_state = GPS_STATUS_LACK;
+            get_device_state()->gps_state = STATUS_LACK;
             Serial.println("GPS LACK");
         }
     }
     else
     {
-        if (get_device_state()->gps_state == GPS_STATUS_LACK)
-            get_device_state()->gps_state = GPS_STATUS_NORMAL;
+        if (get_device_state()->gps_state == STATUS_LACK)
+            get_device_state()->gps_state = STATUS_NORMAL;
         Serial.printf("Lat: %f\t", get_device_state()->gps_data.lat);
         Serial.printf("Lng: %f\t", get_device_state()->gps_data.lng);
         Serial.printf("Alt: %f\t", get_device_state()->gps_data.altitude);

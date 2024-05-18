@@ -5,17 +5,9 @@
 
 typedef enum
 {
-    PRINTER_STATUS_INIT = 0,
-    PRINTER_STATUS_START,
-    PRINTER_STATUS_WORKING,
-    PRINTER_STATUS_FINISH,
-} printer_state_e;
-
-typedef enum
-{
-    GPS_STATUS_NORMAL = 0,
-    GPS_STATUS_LACK,
-} gps_state_e;
+    STATUS_NORMAL = 0,
+    STATUS_LACK,
+} state_e;
 
 typedef struct
 {
@@ -32,15 +24,27 @@ typedef struct
     double speed;        // km/h
     double direction;    // 度 0~360
     uint8_t satellites;  // 卫星数
-} gps_data_s;
+} gps_data_t;
+
+typedef struct
+{
+    float ax;
+    float ay;
+    float az;
+    float gx;
+    float gy;
+    float gz;
+    float temperature;
+} imu_data_t;
 
 typedef struct
 {
     uint8_t battery;
     uint8_t temperature;
-    gps_state_e gps_state;
-    printer_state_e printer_state;
-    gps_data_s gps_data;
+    state_e gps_state;
+    state_e imu_state;
+    gps_data_t gps_data;
+    imu_data_t imu_data;
     bool read_ble_finish;
 } device_state_t;
 
@@ -50,6 +54,8 @@ device_state_t *get_device_state();
 
 void set_read_ble_finish(bool finish);
 
-void set_device_paper_status(gps_state_e status);
+void set_device_gps_status(state_e status);
+
+void set_device_imu_status(state_e status);
 
 #endif

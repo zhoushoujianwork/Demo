@@ -1,6 +1,6 @@
 #include "em_hal.h"
 #include "hal/bat.h"
-#include "hal/gyro.h"
+#include "hal/imu.h"
 
 void run_led(led_type_e type)
 {
@@ -37,7 +37,6 @@ void run_led(led_type_e type)
 void read_all_hal()
 {
     read_battery();
-    read_gyro();
     // read_temperature();
     // read_paper_statue();
 }

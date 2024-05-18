@@ -7,9 +7,13 @@ device_state_t *get_device_state()
     return &g_device_state;
 }
 
-void set_device_paper_status(gps_state_e status)
+void set_device_gps_status(state_e status)
 {
     g_device_state.gps_state = status;
+}
+void set_device_imu_status(state_e status)
+{
+    g_device_state.imu_state = status;
 }
 
 void set_read_ble_finish(bool finish)
@@ -20,10 +24,10 @@ void set_read_ble_finish(bool finish)
 void init_device_state()
 {
     memset(&g_device_state, 0, sizeof(device_state_t));
-    g_device_state.printer_state = PRINTER_STATUS_INIT;
+    g_device_state.imu_state = STATUS_LACK;
+    g_device_state.gps_state = STATUS_LACK;
     g_device_state.battery = 13;
     g_device_state.temperature = 30;
-    g_device_state.gps_state = GPS_STATUS_LACK;
     g_device_state.read_ble_finish = false;
 
     g_device_state.gps_data.year = 2022;
@@ -39,4 +43,12 @@ void init_device_state()
     g_device_state.gps_data.speed = 0;
     g_device_state.gps_data.direction = 0;
     g_device_state.gps_data.satellites = 0;
+
+    g_device_state.imu_data.ax = 0;
+    g_device_state.imu_data.ay = 0;
+    g_device_state.imu_data.az = 0;
+    g_device_state.imu_data.gx = 0;
+    g_device_state.imu_data.gy = 0;
+    g_device_state.imu_data.gz = 0;
+    g_device_state.imu_data.temperature = 0;
 }

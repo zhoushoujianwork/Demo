@@ -7,6 +7,7 @@
 #include "em_config.h"
 #include "em_hal.h"
 #include "hal/gps.h"
+#include "hal/imu.h"
 
 void setup_ble();
 bool get_ble_connect();
