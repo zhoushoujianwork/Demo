@@ -69,8 +69,10 @@ void read_gps()
         Serial.printf("Dir: %f\t", get_device_state()->gps_data.direction);
         Serial.printf("Sat: %d\t", get_device_state()->gps_data.satellites);
         // 时间格式 YYYYMMDD HHMMSS
-        Serial.printf("%04d%02d%02d %02d%02d%02d\n",
+        Serial.printf("%04d%02d%02d %02d%02d%02d",
                       get_device_state()->gps_data.year, get_device_state()->gps_data.month, get_device_state()->gps_data.day, get_device_state()->gps_data.hour, get_device_state()->gps_data.minute, get_device_state()->gps_data.second);
+
+        Serial.println();
     }
 }
 

@@ -54,7 +54,8 @@ class bleCharacteristicCallbacks : public BLECharacteristicCallbacks
     void onRead(BLECharacteristic *pCharacteristic)
     {
         // 客户端读取事件回调函数
-        Serial.printf("读取到特征值 %s\n", pCharacteristic->toString().c_str());
+        // Serial.printf("读取到特征值 %s\n", pCharacteristic->toString().c_str());
+
         if (pCharacteristic->getUUID().toString() == CHARACTERISTIC_UUID_GPS)
         {
             read_gps();
@@ -150,5 +151,5 @@ void setup_ble()
 
     pService->start(); // 启动服务
     // BLEDevice::startAdvertising();
-    Serial.printf("BLE ok %s", BLE_NAME);
+    Serial.printf("BLE ok %s\n", BLE_NAME);
 }
