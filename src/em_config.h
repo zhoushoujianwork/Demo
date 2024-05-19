@@ -21,7 +21,6 @@
 #define CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b2600"     // 自定义打印UUID
 #define CHARACTERISTIC_UUID_GPS "beb5483e-36e1-4688-b7f5-ea07361b2601" // 自定义打印UUID
 #define CHARACTERISTIC_UUID_IMU "beb5483e-36e1-4688-b7f5-ea07361b2602" // 自定义打印UUID
-
-#define BROADCAST_INTERVAL 10000 // 广播间隔时间 单位毫秒
+#define BROADCAST_INTERVAL 10000                                       // 广播间隔时间 单位毫秒
 
 #endif

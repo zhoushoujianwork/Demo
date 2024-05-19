@@ -96,29 +96,29 @@ void read_imu()
     // Acceleration 加速度
     Serial.print("Acceleration X: ");
     Serial.print(a.acceleration.x);
-    get_device_state()->imu_data.ax = a.acceleration.x;
+    get_imu_data()->ax = a.acceleration.x;
     Serial.print(", Y: ");
     Serial.print(a.acceleration.y);
-    get_device_state()->imu_data.ay = a.acceleration.y;
+    get_imu_data()->ay = a.acceleration.y;
     Serial.print(", Z: ");
     Serial.print(a.acceleration.z);
-    get_device_state()->imu_data.az = a.acceleration.z;
+    get_imu_data()->az = a.acceleration.z;
     Serial.print(" m/s^2\t");
 
     // imu 陀螺仪 角速度
     Serial.print("Rotation X: ");
     Serial.print(g.gyro.x);
-    get_device_state()->imu_data.gx = g.gyro.x;
+    get_imu_data()->gx = g.gyro.x;
     Serial.print(", Y: ");
     Serial.print(g.gyro.y);
-    get_device_state()->imu_data.gy = g.gyro.y;
+    get_imu_data()->gy = g.gyro.y;
     Serial.print(", Z: ");
     Serial.print(g.gyro.z);
-    get_device_state()->imu_data.gz = g.gyro.z;
+    get_imu_data()->gz = g.gyro.z;
     Serial.print(" rad/s\t");
 
     Serial.print("Temperature: ");
     Serial.print(temp.temperature);
-    get_device_state()->imu_data.temperature = temp.temperature;
+    get_imu_data()->temperature = temp.temperature;
     Serial.println(" degC\t");
 }

@@ -15,42 +15,42 @@ void read_gps()
 {
     if (gps.location.isValid())
     {
-        get_device_state()->gps_data.lat = gps.location.lat();
-        get_device_state()->gps_data.lng = gps.location.lng();
+        get_gps_data()->lat = gps.location.lat();
+        get_gps_data()->lng = gps.location.lng();
     };
 
     if (gps.altitude.isValid())
-        get_device_state()->gps_data.altitude = gps.altitude.meters();
+        get_gps_data()->altitude = gps.altitude.meters();
 
     if (gps.speed.isValid())
-        get_device_state()->gps_data.speed = gps.speed.kmph();
+        get_gps_data()->speed = gps.speed.kmph();
 
     if (gps.course.isValid())
-        get_device_state()->gps_data.direction = gps.course.deg();
+        get_gps_data()->direction = gps.course.deg();
 
     if (gps.satellites.isValid())
-        get_device_state()->gps_data.satellites = gps.satellites.value();
+        get_gps_data()->satellites = gps.satellites.value();
 
     if (gps.hdop.isValid())
-        get_device_state()->gps_data.centisecond = gps.hdop.value();
+        get_gps_data()->centisecond = gps.hdop.value();
 
     if (gps.date.isValid())
     {
-        get_device_state()->gps_data.year = gps.date.year();
-        get_device_state()->gps_data.month = gps.date.month();
-        get_device_state()->gps_data.day = gps.date.day();
+        get_gps_data()->year = gps.date.year();
+        get_gps_data()->month = gps.date.month();
+        get_gps_data()->day = gps.date.day();
     };
 
     if (gps.time.isValid())
     {
-        get_device_state()->gps_data.hour = gps.time.hour();
-        get_device_state()->gps_data.minute = gps.time.minute();
-        get_device_state()->gps_data.second = gps.time.second();
-        get_device_state()->gps_data.centisecond = gps.time.centisecond();
+        get_gps_data()->hour = gps.time.hour();
+        get_gps_data()->minute = gps.time.minute();
+        get_gps_data()->second = gps.time.second();
+        get_gps_data()->centisecond = gps.time.centisecond();
     };
 
     // gps 卫星数量少于3个，改变状态
-    if (get_device_state()->gps_data.satellites < 3)
+    if (get_gps_data()->satellites < 3)
     {
         if (get_device_state()->gps_state == STATUS_NORMAL)
         {
@@ -62,15 +62,15 @@ void read_gps()
     {
         if (get_device_state()->gps_state == STATUS_LACK)
             get_device_state()->gps_state = STATUS_NORMAL;
-        Serial.printf("Lat: %f\t", get_device_state()->gps_data.lat);
-        Serial.printf("Lng: %f\t", get_device_state()->gps_data.lng);
-        Serial.printf("Alt: %f\t", get_device_state()->gps_data.altitude);
-        Serial.printf("Spd: %f\t", get_device_state()->gps_data.speed);
-        Serial.printf("Dir: %f\t", get_device_state()->gps_data.direction);
-        Serial.printf("Sat: %d\t", get_device_state()->gps_data.satellites);
+        Serial.printf("Lat: %f\t", get_gps_data()->lat);
+        Serial.printf("Lng: %f\t", get_gps_data()->lng);
+        Serial.printf("Alt: %f\t", get_gps_data()->altitude);
+        Serial.printf("Spd: %f\t", get_gps_data()->speed);
+        Serial.printf("Dir: %f\t", get_gps_data()->direction);
+        Serial.printf("Sat: %d\t", get_gps_data()->satellites);
         // 时间格式 YYYYMMDD HHMMSS
         Serial.printf("%04d%02d%02d %02d%02d%02d",
-                      get_device_state()->gps_data.year, get_device_state()->gps_data.month, get_device_state()->gps_data.day, get_device_state()->gps_data.hour, get_device_state()->gps_data.minute, get_device_state()->gps_data.second);
+                      get_gps_data()->year, get_gps_data()->month, get_gps_data()->day, get_gps_data()->hour, get_gps_data()->minute, get_gps_data()->second);
 
         Serial.println();
     }

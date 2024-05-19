@@ -17,7 +17,7 @@ void ble_report()
     {
         // 如果设备已连接则发送状态
         device_state_t *pdevice = get_device_state();
-        uint8_t status[4]; // 定义 5 个字节的数组 存储状态 分别为：电池电压，温度，GPS状态，打印状态
+        uint8_t status[4];
         status[0] = pdevice->battery;
         status[1] = pdevice->temperature;
         status[2] = pdevice->gps_state;
@@ -59,16 +59,16 @@ class bleCharacteristicCallbacks : public BLECharacteristicCallbacks
         if (pCharacteristic->getUUID().toString() == CHARACTERISTIC_UUID_GPS)
         {
             read_gps();
-            gps_data_t gps = get_device_state()->gps_data;
+            gps_data_t gps = *get_gps_data();
             pCharacteristic->setValue((uint8_t *)&gps, sizeof(gps));
-            pCharacteristic->notify();
+            // pCharacteristic->notify();
         }
         else if (pCharacteristic->getUUID().toString() == CHARACTERISTIC_UUID_IMU)
         {
             read_imu();
-            imu_data_t imu = get_device_state()->imu_data;
+            imu_data_t imu = *get_imu_data();
             pCharacteristic->setValue((uint8_t *)&imu, sizeof(imu));
-            pCharacteristic->notify();
+            // pCharacteristic->notify();
         }
     }
 
@@ -112,8 +112,7 @@ class bleCharacteristicCallbacks : public BLECharacteristicCallbacks
 
 void setup_ble()
 {
-    BLEDevice::init(BLE_NAME);     // 填写自身对外显示的蓝牙设备名称，并初始化蓝牙功能
-    BLEDevice::startAdvertising(); // 开启Advertising广播
+    BLEDevice::init(BLE_NAME); // 填写自身对外显示的蓝牙设备名称，并初始化蓝牙功能
 
     BLEServer *pServer = BLEDevice::createServer();  // 创建服务器
     pServer->setCallbacks(new bleServerCallbacks()); // 绑定回调函数
@@ -150,6 +149,12 @@ void setup_ble()
     pCharacteristic->addDescriptor(new BLE2902()); // 添加描述
 
     pService->start(); // 启动服务
+
+    // 设置广播数据
+    BLEAdvertising *pAdvertising = pServer->getAdvertising();
+    pAdvertising->addServiceUUID(SERVICE_UUID);
+    BLEDevice::startAdvertising(); // 开启Advertising广播
+
     // BLEDevice::startAdvertising();
     Serial.printf("BLE ok %s\n", BLE_NAME);
 }
