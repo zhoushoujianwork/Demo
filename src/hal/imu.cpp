@@ -88,37 +88,63 @@ void setup_imu(void)
     delay(100);
 }
 
+// // 定义平均滤波数组大小
+// #define FILTER_SIZE 4 // 缓冲区大小 和刷新速度有关 越快越小，否则会有延迟
+// float bufferRoll[FILTER_SIZE];
+// int roll_index = 0; // 缓冲区索引
+// float bufferPitch[FILTER_SIZE];
+// int pitch_index = 0;
+// float bufferYaw[FILTER_SIZE];
+// int yaw_index = 0;
+
+// /*
+//     一维滤波
+//     param: 数组bufferRoll 缓冲区,newData 新数据
+// */
+// void addData(float newData, float *bufferRoll, int &roll_index)
+// {
+//     bufferRoll[roll_index] = newData;
+//     // 循环更新缓冲区索引
+//     roll_index = (roll_index + 1) % FILTER_SIZE;
+// }
+
+// // 计算平均值
+// float getFilteredData(float *buffer)
+// {
+//     float average = 0;
+//     for (int i = 0; i < FILTER_SIZE; i++)
+//     {
+//         average += buffer[i];
+//     }
+//     return average / FILTER_SIZE;
+// }
+
 void read_imu()
 {
     mpu.getEvent(&a, &g, &temp);
 
     /* Print out the values */
-    // Acceleration 加速度
-    Serial.print("Acceleration X: ");
-    Serial.print(a.acceleration.x);
     get_imu_data()->ax = a.acceleration.x;
-    Serial.print(", Y: ");
-    Serial.print(a.acceleration.y);
     get_imu_data()->ay = a.acceleration.y;
-    Serial.print(", Z: ");
-    Serial.print(a.acceleration.z);
     get_imu_data()->az = a.acceleration.z;
-    Serial.print(" m/s^2\t");
-
-    // imu 陀螺仪 角速度
-    Serial.print("Rotation X: ");
-    Serial.print(g.gyro.x);
     get_imu_data()->gx = g.gyro.x;
-    Serial.print(", Y: ");
-    Serial.print(g.gyro.y);
     get_imu_data()->gy = g.gyro.y;
-    Serial.print(", Z: ");
-    Serial.print(g.gyro.z);
     get_imu_data()->gz = g.gyro.z;
-    Serial.print(" rad/s\t");
+    get_imu_data()->roll = a.gyro.roll;
+    get_imu_data()->pitch = a.gyro.pitch;
+    get_imu_data()->yaw = a.gyro.heading;
 
-    Serial.print("Temperature: ");
+    Serial.print("Roll: ");
+    Serial.print(get_imu_data()->roll);
+    Serial.print(", Pitch: ");
+    Serial.print(get_imu_data()->pitch);
+    Serial.print(", Yaw: ");
+    Serial.print(get_imu_data()->yaw);
+
+    // imu 温度
+    Serial.print(", Temperature: ");
     Serial.print(temp.temperature);
     get_imu_data()->temperature = temp.temperature;
-    Serial.println(" degC\t");
+
+    Serial.println("");
 }

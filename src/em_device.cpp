@@ -60,5 +60,8 @@ void init_device_state()
     g_imu_data.gx = 0;
     g_imu_data.gy = 0;
     g_imu_data.gz = 0;
+    g_imu_data.roll = 0;
+    g_imu_data.pitch = 0;
+    g_imu_data.yaw = 0;
     g_imu_data.temperature = 0;
 }
