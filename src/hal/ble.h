@@ -4,6 +4,7 @@
 #include <BLEDevice.h>
 #include <BLE2902.h>
 
+#include "hal/led.h"
 #include "em_config.h"
 #include "em_hal.h"
 #include "hal/gps.h"

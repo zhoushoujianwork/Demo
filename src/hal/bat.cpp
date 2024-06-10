@@ -3,9 +3,9 @@
 
 void adc_init()
 {
-    pinMode(PIN_BAT_EN, OUTPUT);       // ADC使能引脚
-    digitalWrite(PIN_BAT_EN, LOW);     // 关闭ADC
-    analogReadResolution(PIN_BAT_BIT); // ADC采样次数，默认就是12位
+    // pinMode(PIN_BAT_EN, OUTPUT); // ADC使能引脚
+    // digitalWrite(PIN_BAT_EN, LOW);     // 关闭ADC
+    // analogReadResolution(PIN_BAT_BIT); // ADC采样次数，默认就是12位
 }
 
 int get_adc_volts()
@@ -22,7 +22,7 @@ void read_battery()
     get_device_state()->battery = map(get_adc_volts() * 2, 3300, 4200, 0, 100);
     if (get_device_state()->battery > 100)
         get_device_state()->battery = 100;
-    Serial.printf("battery = %d\t", get_device_state()->battery);
+    Serial.printf("battery = %d\n", get_device_state()->battery);
 }
 
 void setup_bat()

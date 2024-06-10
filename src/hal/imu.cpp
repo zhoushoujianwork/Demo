@@ -1,12 +1,10 @@
 // Basic demo for accelerometer readings from Adafruit MPU6050
 #include "imu.h"
 #include <Adafruit_MPU6050.h>
-#include <Adafruit_Sensor.h>
-#include <Wire.h>
+// #include <Adafruit_Sensor.h>
 #include "em_device.h"
 
 Adafruit_MPU6050 mpu;
-sensors_event_t a, g, temp;
 
 void setup_imu(void)
 {
@@ -15,10 +13,7 @@ void setup_imu(void)
     if (!mpu.begin())
     {
         Serial.println("Failed to find MPU6050 chip");
-        while (1)
-        {
-            delay(10);
-        }
+        return;
     }
     Serial.println("MPU6050 Found!");
 
@@ -88,39 +83,9 @@ void setup_imu(void)
     delay(100);
 }
 
-// // 定义平均滤波数组大小
-// #define FILTER_SIZE 4 // 缓冲区大小 和刷新速度有关 越快越小，否则会有延迟
-// float bufferRoll[FILTER_SIZE];
-// int roll_index = 0; // 缓冲区索引
-// float bufferPitch[FILTER_SIZE];
-// int pitch_index = 0;
-// float bufferYaw[FILTER_SIZE];
-// int yaw_index = 0;
-
-// /*
-//     一维滤波
-//     param: 数组bufferRoll 缓冲区,newData 新数据
-// */
-// void addData(float newData, float *bufferRoll, int &roll_index)
-// {
-//     bufferRoll[roll_index] = newData;
-//     // 循环更新缓冲区索引
-//     roll_index = (roll_index + 1) % FILTER_SIZE;
-// }
-
-// // 计算平均值
-// float getFilteredData(float *buffer)
-// {
-//     float average = 0;
-//     for (int i = 0; i < FILTER_SIZE; i++)
-//     {
-//         average += buffer[i];
-//     }
-//     return average / FILTER_SIZE;
-// }
-
 void read_imu()
 {
+    sensors_event_t a, g, temp;
     mpu.getEvent(&a, &g, &temp);
 
     /* Print out the values */

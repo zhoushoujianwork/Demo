@@ -40,6 +40,7 @@ class bleServerCallbacks : public BLEServerCallbacks
         // 在有设备接入后Advertising广播会被停止，所以要在设备断开连接时重新开启广播
         // 不然的话只有重启ESP32后才能重新搜索到
         pServer->startAdvertising(); // 该行效果同 BLEDevice::startAdvertising();
+        run_led(LED_DISCONNECT);
     }
 };
 
@@ -52,14 +53,14 @@ class bleCharacteristicCallbacks : public BLECharacteristicCallbacks
 
         if (pCharacteristic->getUUID().toString() == CHARACTERISTIC_UUID_GPS)
         {
-            read_gps();
+            // read_gps();
             gps_data_t gps = *get_gps_data();
             pCharacteristic->setValue((uint8_t *)&gps, sizeof(gps));
             // pCharacteristic->notify();
         }
         else if (pCharacteristic->getUUID().toString() == CHARACTERISTIC_UUID_IMU)
         {
-            read_imu();
+            // read_imu();
             imu_data_t imu = *get_imu_data();
             pCharacteristic->setValue((uint8_t *)&imu, sizeof(imu));
             // pCharacteristic->notify();

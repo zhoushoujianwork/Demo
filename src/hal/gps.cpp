@@ -8,11 +8,13 @@ void setup_gps()
 {
     Serial.println(TinyGPSPlus::libraryVersion());
     gpsSerial.begin(9600);
-    Serial.println(F("GPS 9600 Ready"));
+    Serial.println(F("INIT GPS 9600 OK"));
 }
 
 void read_gps()
 {
+    Serial.print("read_gps \t");
+
     if (gps.location.isValid())
     {
         get_gps_data()->lat = gps.location.lat();
@@ -62,6 +64,7 @@ void read_gps()
     {
         if (get_device_state()->gps_state == STATUS_LACK)
             get_device_state()->gps_state = STATUS_NORMAL;
+
         Serial.printf("Lat: %f\t", get_gps_data()->lat);
         Serial.printf("Lng: %f\t", get_gps_data()->lng);
         Serial.printf("Alt: %f\t", get_gps_data()->altitude);

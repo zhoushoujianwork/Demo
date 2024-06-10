@@ -31,6 +31,8 @@ void check_btn()
             else
             {
                 Serial.println("short click");
+                // 执行短按动作，重启esp32
+                ESP.restart();
             }
             btn_state = false;
         }

@@ -3,6 +3,7 @@
 
 #include "em_config.h"
 #include "em_device.h"
+#include "gps.h"
 
 typedef enum
 {
@@ -11,14 +12,6 @@ typedef enum
     BEEP_PRINTER_START,
 } beep_type_e;
 
-typedef enum
-{
-    LED_CONNECT = 0,
-    LED_WARN,
-    LED_PRINTER_START,
-} led_type_e;
-
-void run_led(led_type_e type);
 void read_all_hal();
 
 #endif

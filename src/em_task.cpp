@@ -13,11 +13,16 @@ void run_report()
     {
         clean_state_timeout();
         read_all_hal();
+
+#if ENABLE_BLE
         if (get_ble_connect())
         {
             Serial.print("report device status ： report time up\n");
             ble_report();
+            read_gps();
+            read_imu();
         }
+#endif
     }
 }
 
@@ -45,23 +50,39 @@ void task_report(void *pvParameters)
     {
         run_report();
         vTaskDelay(100);
+#if ENABLE_IMU
+        // read_imu();
+#endif
+#if ENABLE_GPS
+        // read_gps();
+#endif
     }
 }
 
 void init_task()
 {
     Serial.begin(115200);
+
+    // 清理终端输出
+    Serial.println("");
+
     init_device_state();
     init_timer();
-    // init_hal();
-    // init_queue();
 
     setup_led();
     setup_bat();
     setup_btn();
-    setup_gps();
+#if ENABLE_BLE
     setup_ble();
+#endif
+
+#if ENABLE_GPS
+    setup_gps();
+#endif
+
+#if ENABLE_IMU
     setup_imu();
+#endif
 
     xTaskCreate(
         loop_led,   // 任务函数
@@ -93,5 +114,7 @@ void init_task()
 
 void loop_task()
 {
+#if ENABLE_GPS
     loop_gps();
+#endif
 }

@@ -2,18 +2,25 @@
 #define _EM_CONFIG_H_
 
 #include <Arduino.h>
-#define LedPin 2 // LED引脚
+#define LedPin 18 // LED引脚
 
-#define BtnPin 0           // 按键引脚
+#define BtnPin 5           // 按键引脚
 #define ShortPressTime 500 // 短按时间 单位毫秒
 
 #define PIN_BAT_ADC 34 // 电池电压检测引脚 GPIO36 需要支持ADC的引脚
-#define PIN_BAT_EN 4   // ADC使能引脚 GPIO4
-#define PIN_BAT_BIT 12 // ADC采样次数 0-4095
+// #define PIN_BAT_BIT 12 // ADC采样次数 0-4095
+
+#define ENABLE_GPS 1
+#define ENABLE_IMU 1
+#define ENABLE_BLE 1
+
+// 定义IMU模块的引脚
+#define PIN_IMU_SDA 21 // IMU模块接入 I2C SDA
+#define PIN_IMU_SCL 22 // IMU模块 I2C SCL
 
 // 定义GPS模块的引脚
-#define PIN_GPS_RX 19 // GPS模块RX
-#define PIN_GPS_TX 23 // GPS模块TX
+#define PIN_GPS_RX 23 // GPS模块RX
+#define PIN_GPS_TX 19 // GPS模块TX
 
 // BLE
 #define BLE_NAME "ESP32-MOTO"
