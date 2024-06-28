@@ -83,7 +83,7 @@ void setup_imu(void)
     delay(100);
 }
 
-void read_imu()
+void load_imu()
 {
     sensors_event_t a, g, temp;
     mpu.getEvent(&a, &g, &temp);
@@ -98,7 +98,11 @@ void read_imu()
     get_imu_data()->roll = a.gyro.roll;
     get_imu_data()->pitch = a.gyro.pitch;
     get_imu_data()->yaw = a.gyro.heading;
+    get_imu_data()->temperature = temp.temperature;
+}
 
+void read_imu()
+{
     Serial.print("Roll: ");
     Serial.print(get_imu_data()->roll);
     Serial.print(", Pitch: ");
@@ -108,8 +112,6 @@ void read_imu()
 
     // imu 温度
     Serial.print(", Temperature: ");
-    Serial.print(temp.temperature);
-    get_imu_data()->temperature = temp.temperature;
-
+    Serial.print(get_imu_data()->temperature);
     Serial.println("");
 }

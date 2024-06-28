@@ -49,6 +49,7 @@ void task_report(void *pvParameters)
     for (;;) // A Task shall never return or exit.
     {
         run_report();
+        load_imu();
         vTaskDelay(100);
 #if ENABLE_IMU
         // read_imu();

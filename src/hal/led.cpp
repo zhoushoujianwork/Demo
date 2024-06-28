@@ -69,12 +69,13 @@ void run_led(led_type_e type)
 void setup_led()
 {
   pinMode(LedPin, OUTPUT);
-  delay(1000);
-  run_led(LED_WARN);
-  delay(1000);
-  run_led(LED_BLINK);
-  delay(1000);
-  run_led(LED_ERROR);
+
+  // delay(1000);
+  // run_led(LED_WARN);
+  // delay(1000);
+  // run_led(LED_BLINK);
+  // delay(1000);
+  // run_led(LED_ERROR);
 
   Serial.println("LED Ready");
 }

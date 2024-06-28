@@ -14,43 +14,6 @@ void setup_gps()
 void read_gps()
 {
     Serial.print("read_gps \t");
-
-    if (gps.location.isValid())
-    {
-        get_gps_data()->lat = gps.location.lat();
-        get_gps_data()->lng = gps.location.lng();
-    };
-
-    if (gps.altitude.isValid())
-        get_gps_data()->altitude = gps.altitude.meters();
-
-    if (gps.speed.isValid())
-        get_gps_data()->speed = gps.speed.kmph();
-
-    if (gps.course.isValid())
-        get_gps_data()->direction = gps.course.deg();
-
-    if (gps.satellites.isValid())
-        get_gps_data()->satellites = gps.satellites.value();
-
-    if (gps.hdop.isValid())
-        get_gps_data()->centisecond = gps.hdop.value();
-
-    if (gps.date.isValid())
-    {
-        get_gps_data()->year = gps.date.year();
-        get_gps_data()->month = gps.date.month();
-        get_gps_data()->day = gps.date.day();
-    };
-
-    if (gps.time.isValid())
-    {
-        get_gps_data()->hour = gps.time.hour();
-        get_gps_data()->minute = gps.time.minute();
-        get_gps_data()->second = gps.time.second();
-        get_gps_data()->centisecond = gps.time.centisecond();
-    };
-
     // gps 卫星数量少于3个，改变状态
     if (get_gps_data()->satellites < 3)
     {
@@ -85,6 +48,42 @@ void loop_gps()
     while (gpsSerial.available() > 0)
     {
         // Serial.print((char)gpsSerial.read());
+
         gps.encode(gpsSerial.read());
+        if (gps.location.isValid())
+        {
+            get_gps_data()->lat = gps.location.lat();
+            get_gps_data()->lng = gps.location.lng();
+        };
+
+        if (gps.altitude.isValid())
+            get_gps_data()->altitude = gps.altitude.meters();
+
+        if (gps.speed.isValid())
+            get_gps_data()->speed = gps.speed.kmph();
+
+        if (gps.course.isValid())
+            get_gps_data()->direction = gps.course.deg();
+
+        if (gps.satellites.isValid())
+            get_gps_data()->satellites = gps.satellites.value();
+
+        if (gps.hdop.isValid())
+            get_gps_data()->centisecond = gps.hdop.value();
+
+        if (gps.date.isValid())
+        {
+            get_gps_data()->year = gps.date.year();
+            get_gps_data()->month = gps.date.month();
+            get_gps_data()->day = gps.date.day();
+        };
+
+        if (gps.time.isValid())
+        {
+            get_gps_data()->hour = gps.time.hour();
+            get_gps_data()->minute = gps.time.minute();
+            get_gps_data()->second = gps.time.second();
+            get_gps_data()->centisecond = gps.time.centisecond();
+        };
     }
 }

@@ -3,5 +3,6 @@
 #include "em_config.h"
 
 void setup_imu();
+void load_imu();
 void read_imu();
 #endif
