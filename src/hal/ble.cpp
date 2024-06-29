@@ -13,13 +13,11 @@ bool get_ble_connect()
 
 void ble_report()
 {
-    if (get_ble_connect())
-    {
-        // 如果设备已连接则发送状态
-        device_state_t *pdevice = get_device_state();
-        pCharacteristic->setValue((uint8_t *)pdevice, sizeof(device_state_t));
-        pCharacteristic->notify();
-    }
+    // 如果设备已连接则发送状态
+    device_state_t *pdevice = get_device_state();
+    pCharacteristic->setValue((uint8_t *)pdevice, sizeof(device_state_t));
+    pCharacteristic->notify();
+    Serial.println("ble report ok");
 }
 
 // Server回调函数声明
@@ -53,14 +51,14 @@ class bleCharacteristicCallbacks : public BLECharacteristicCallbacks
 
         if (pCharacteristic->getUUID().toString() == CHARACTERISTIC_UUID_GPS)
         {
-            // read_gps();
+            read_gps();
             gps_data_t gps = *get_gps_data();
             pCharacteristic->setValue((uint8_t *)&gps, sizeof(gps));
             // pCharacteristic->notify();
         }
         else if (pCharacteristic->getUUID().toString() == CHARACTERISTIC_UUID_IMU)
         {
-            // read_imu();
+            read_imu();
             imu_data_t imu = *get_imu_data();
             pCharacteristic->setValue((uint8_t *)&imu, sizeof(imu));
             // pCharacteristic->notify();
@@ -102,16 +100,16 @@ void setup_ble()
     pCharacteristic->setCallbacks(new bleCharacteristicCallbacks());
     pCharacteristic->addDescriptor(new BLE2902()); // 添加描述
 
-    pCharacteristic = pService->createCharacteristic( // 创建特征
+    BLECharacteristic *pCharacteristicGPS = pService->createCharacteristic( // 创建特征
         CHARACTERISTIC_UUID_GPS,
         BLECharacteristic::PROPERTY_READ |
             BLECharacteristic::PROPERTY_NOTIFY |
             BLECharacteristic::PROPERTY_WRITE |
             BLECharacteristic::PROPERTY_WRITE_NR);
-    pCharacteristic->setCallbacks(new bleCharacteristicCallbacks());
-    pCharacteristic->addDescriptor(new BLE2902()); // 添加描述
+    pCharacteristicGPS->setCallbacks(new bleCharacteristicCallbacks());
+    pCharacteristicGPS->addDescriptor(new BLE2902()); // 添加描述
 
-    pCharacteristic = pService->createCharacteristic( // 创建特征
+    BLECharacteristic *pCharacteristicIMU = pService->createCharacteristic( // 创建特征
         CHARACTERISTIC_UUID_IMU,
         BLECharacteristic::PROPERTY_READ |
             BLECharacteristic::PROPERTY_NOTIFY |
@@ -119,8 +117,8 @@ void setup_ble()
             BLECharacteristic::PROPERTY_WRITE_NR);
 
     // 如果客户端连上设备后没有任何写入的情况下第一次读取到的数据应该是这里设置的值
-    pCharacteristic->setCallbacks(new bleCharacteristicCallbacks());
-    pCharacteristic->addDescriptor(new BLE2902()); // 添加描述
+    pCharacteristicIMU->setCallbacks(new bleCharacteristicCallbacks());
+    pCharacteristicIMU->addDescriptor(new BLE2902()); // 添加描述
 
     pService->start(); // 启动服务
 

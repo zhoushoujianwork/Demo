@@ -17,10 +17,7 @@ void run_report()
 #if ENABLE_BLE
         if (get_ble_connect())
         {
-            Serial.print("report device status ： report time up\n");
             ble_report();
-            read_gps();
-            read_imu();
         }
 #endif
     }
@@ -49,14 +46,7 @@ void task_report(void *pvParameters)
     for (;;) // A Task shall never return or exit.
     {
         run_report();
-        load_imu();
         vTaskDelay(100);
-#if ENABLE_IMU
-        // read_imu();
-#endif
-#if ENABLE_GPS
-        // read_gps();
-#endif
     }
 }
 
@@ -117,5 +107,8 @@ void loop_task()
 {
 #if ENABLE_GPS
     loop_gps();
+#endif
+#if ENABLE_IMU
+    load_imu();
 #endif
 }
