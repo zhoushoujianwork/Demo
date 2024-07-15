@@ -10,7 +10,7 @@
 #define PIN_BAT_ADC 34 // 电池电压检测引脚 GPIO36 需要支持ADC的引脚
 // #define PIN_BAT_BIT 12 // ADC采样次数 0-4095
 
-#define ENABLE_GPS 1
+#define ENABLE_GPS 0
 #define ENABLE_IMU 1
 #define ENABLE_BLE 1
 

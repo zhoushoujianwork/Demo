@@ -47,6 +47,7 @@ void task_report(void *pvParameters)
     {
         run_report();
         vTaskDelay(100);
+        // read_gps();
     }
 }
 
@@ -100,6 +101,7 @@ void init_task()
         NULL          // 任务句柄
     );
 
+    run_led(LED_BLINK);
     Serial.println("init_task ok");
 }
 
@@ -110,5 +112,6 @@ void loop_task()
 #endif
 #if ENABLE_IMU
     load_imu();
+    // read_imu();
 #endif
 }

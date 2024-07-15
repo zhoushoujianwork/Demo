@@ -1,104 +1,129 @@
-// Basic demo for accelerometer readings from Adafruit MPU6050
 #include "imu.h"
-#include <Adafruit_MPU6050.h>
-// #include <Adafruit_Sensor.h>
-#include "em_device.h"
+#include <Wire.h>
+#include <SPI.h>
+#include "SensorQMI8658.hpp"
 
-Adafruit_MPU6050 mpu;
+#define USE_WIRE
 
-void setup_imu(void)
+#ifndef SENSOR_SDA
+#define SENSOR_SDA 21
+#endif
+
+#ifndef SENSOR_SCL
+#define SENSOR_SCL 22
+#endif
+
+#ifndef SENSOR_IRQ
+#define SENSOR_IRQ -1
+#endif
+
+#define IMU_CS 5
+
+SensorQMI8658 qmi;
+
+IMUdata acc;
+IMUdata gyr;
+
+void setup_imu()
 {
-
-    // Try to initialize!
-    if (!mpu.begin())
+#ifdef USE_WIRE
+    // Using WIRE !!
+    if (!qmi.begin(Wire, QMI8658_L_SLAVE_ADDRESS, SENSOR_SDA, SENSOR_SCL))
     {
-        Serial.println("Failed to find MPU6050 chip");
-        return;
+        Serial.println("Failed to find QMI8658 - check your wiring!");
+        while (1)
+        {
+            delay(1000);
+        }
     }
-    Serial.println("MPU6050 Found!");
-
-    mpu.setAccelerometerRange(MPU6050_RANGE_8_G);
-    Serial.print("Accelerometer range set to: ");
-    switch (mpu.getAccelerometerRange())
+#else
+    if (!qmi.begin(IMU_CS))
     {
-    case MPU6050_RANGE_2_G:
-        Serial.println("+-2G");
-        break;
-    case MPU6050_RANGE_4_G:
-        Serial.println("+-4G");
-        break;
-    case MPU6050_RANGE_8_G:
-        Serial.println("+-8G");
-        break;
-    case MPU6050_RANGE_16_G:
-        Serial.println("+-16G");
-        break;
+        Serial.println("Failed to find QMI8658 - check your wiring!");
+        while (1)
+        {
+            delay(1000);
+        }
     }
-    mpu.setGyroRange(MPU6050_RANGE_500_DEG);
-    Serial.print("imu range set to: ");
-    switch (mpu.getGyroRange())
-    {
-    case MPU6050_RANGE_250_DEG:
-        Serial.println("+- 250 deg/s");
-        break;
-    case MPU6050_RANGE_500_DEG:
-        Serial.println("+- 500 deg/s");
-        break;
-    case MPU6050_RANGE_1000_DEG:
-        Serial.println("+- 1000 deg/s");
-        break;
-    case MPU6050_RANGE_2000_DEG:
-        Serial.println("+- 2000 deg/s");
-        break;
-    }
+#endif
 
-    mpu.setFilterBandwidth(MPU6050_BAND_21_HZ);
-    Serial.print("Filter bandwidth set to: ");
-    switch (mpu.getFilterBandwidth())
-    {
-    case MPU6050_BAND_260_HZ:
-        Serial.println("260 Hz");
-        break;
-    case MPU6050_BAND_184_HZ:
-        Serial.println("184 Hz");
-        break;
-    case MPU6050_BAND_94_HZ:
-        Serial.println("94 Hz");
-        break;
-    case MPU6050_BAND_44_HZ:
-        Serial.println("44 Hz");
-        break;
-    case MPU6050_BAND_21_HZ:
-        Serial.println("21 Hz");
-        break;
-    case MPU6050_BAND_10_HZ:
-        Serial.println("10 Hz");
-        break;
-    case MPU6050_BAND_5_HZ:
-        Serial.println("5 Hz");
-        break;
-    }
+    /* Get chip id*/
+    Serial.print("Device ID:");
+    Serial.println(qmi.getChipID(), HEX);
 
-    Serial.println("");
-    delay(100);
-}
+    qmi.configAccelerometer(
+        /*
+         * ACC_RANGE_2G
+         * ACC_RANGE_4G
+         * ACC_RANGE_8G
+         * ACC_RANGE_16G
+         * */
+        SensorQMI8658::ACC_RANGE_4G,
+        /*
+         * ACC_ODR_1000H
+         * ACC_ODR_500Hz
+         * ACC_ODR_250Hz
+         * ACC_ODR_125Hz
+         * ACC_ODR_62_5Hz
+         * ACC_ODR_31_25Hz
+         * ACC_ODR_LOWPOWER_128Hz
+         * ACC_ODR_LOWPOWER_21Hz
+         * ACC_ODR_LOWPOWER_11Hz
+         * ACC_ODR_LOWPOWER_3H
+         * */
+        SensorQMI8658::ACC_ODR_1000Hz,
+        /*
+         *  LPF_MODE_0     //2.66% of ODR
+         *  LPF_MODE_1     //3.63% of ODR
+         *  LPF_MODE_2     //5.39% of ODR
+         *  LPF_MODE_3     //13.37% of ODR
+         * */
+        SensorQMI8658::LPF_MODE_0,
+        // selfTest enable
+        true);
 
-void load_imu()
-{
-    sensors_event_t a, g, temp;
-    mpu.getEvent(&a, &g, &temp);
+    qmi.configGyroscope(
+        /*
+         * GYR_RANGE_16DPS
+         * GYR_RANGE_32DPS
+         * GYR_RANGE_64DPS
+         * GYR_RANGE_128DPS
+         * GYR_RANGE_256DPS
+         * GYR_RANGE_512DPS
+         * GYR_RANGE_1024DPS
+         * */
+        SensorQMI8658::GYR_RANGE_64DPS,
+        /*
+         * GYR_ODR_7174_4Hz
+         * GYR_ODR_3587_2Hz
+         * GYR_ODR_1793_6Hz
+         * GYR_ODR_896_8Hz
+         * GYR_ODR_448_4Hz
+         * GYR_ODR_224_2Hz
+         * GYR_ODR_112_1Hz
+         * GYR_ODR_56_05Hz
+         * GYR_ODR_28_025H
+         * */
+        SensorQMI8658::GYR_ODR_896_8Hz,
+        /*
+         *  LPF_MODE_0     //2.66% of ODR
+         *  LPF_MODE_1     //3.63% of ODR
+         *  LPF_MODE_2     //5.39% of ODR
+         *  LPF_MODE_3     //13.37% of ODR
+         * */
+        SensorQMI8658::LPF_MODE_3,
+        // selfTest enable
+        true);
 
-    /* Print out the values */
-    get_imu_data()->ax = a.acceleration.x;
-    get_imu_data()->ay = a.acceleration.y;
-    get_imu_data()->az = a.acceleration.z;
-    get_imu_data()->gx = g.gyro.x;
-    get_imu_data()->gy = g.gyro.y;
-    get_imu_data()->gz = g.gyro.z;
-    get_imu_data()->roll = a.gyro.roll;
-    get_imu_data()->pitch = a.gyro.pitch;
-    get_imu_data()->yaw = a.gyro.heading;
-    get_imu_data()->temperature = temp.temperature;
+    // In 6DOF mode (accelerometer and gyroscope are both enabled),
+    // the output data rate is derived from the nature frequency of gyroscope
+    qmi.enableGyroscope();
+    qmi.enableAccelerometer();
+
+    // Print register configuration information
+    qmi.dumpCtrlRegister();
+
+    Serial.println("Read data now...");
 }
 
 void read_imu()
@@ -114,4 +139,48 @@ void read_imu()
     Serial.print(", Temperature: ");
     Serial.print(get_imu_data()->temperature);
     Serial.println("");
+}
+
+// 互补滤波参数
+const float alpha = 0.98;
+float angleX = 0.0;
+float angleY = 0.0;
+float angleZ = 0.0;
+long previousTime;
+
+void load_imu()
+{
+
+    long currentTime = millis();
+    float elapsedTime = (currentTime - previousTime) / 1000.0;
+    previousTime = currentTime;
+
+    if (qmi.getDataReady())
+    {
+
+        if (qmi.getAccelerometer(acc.x, acc.y, acc.z))
+        {
+            get_imu_data()->ax = acc.x;
+            get_imu_data()->ay = acc.y;
+            get_imu_data()->az = acc.z;
+        }
+
+        if (qmi.getGyroscope(gyr.x, gyr.y, gyr.z))
+        {
+            get_imu_data()->gx = gyr.x;
+            get_imu_data()->gy = gyr.y;
+            get_imu_data()->gz = gyr.z;
+        }
+    }
+    // 互补滤波计算
+    angleX = alpha * (angleX + gyr.x * elapsedTime) + (1 - alpha) * acc.x;
+    angleY = alpha * (angleY + gyr.y * elapsedTime) + (1 - alpha) * acc.y;
+    angleZ = alpha * (angleZ + gyr.z * elapsedTime) + (1 - alpha) * acc.z;
+
+    get_imu_data()->roll = angleX;
+    get_imu_data()->pitch = angleY;
+    get_imu_data()->yaw = angleZ;
+
+    get_imu_data()->temperature = qmi.getTemperature_C();
+    read_imu();
 }
