@@ -141,19 +141,8 @@ void read_imu()
     Serial.println("");
 }
 
-// 互补滤波参数
-const float alpha = 0.98;
-float angleX = 0.0;
-float angleY = 0.0;
-float angleZ = 0.0;
-long previousTime;
-
 void load_imu()
 {
-
-    long currentTime = millis();
-    float elapsedTime = (currentTime - previousTime) / 1000.0;
-    previousTime = currentTime;
 
     if (qmi.getDataReady())
     {
@@ -163,6 +152,7 @@ void load_imu()
             get_imu_data()->ax = acc.x;
             get_imu_data()->ay = acc.y;
             get_imu_data()->az = acc.z;
+            // Serial.printf("acc:%f,%f,%f\t", acc.x, acc.y, acc.z);
         }
 
         if (qmi.getGyroscope(gyr.x, gyr.y, gyr.z))
@@ -170,17 +160,18 @@ void load_imu()
             get_imu_data()->gx = gyr.x;
             get_imu_data()->gy = gyr.y;
             get_imu_data()->gz = gyr.z;
+            // Serial.printf("gyr:%f,%f,%f\t", gyr.x, gyr.y, gyr.z);
         }
     }
-    // 互补滤波计算
-    angleX = alpha * (angleX + gyr.x * elapsedTime) + (1 - alpha) * acc.x;
-    angleY = alpha * (angleY + gyr.y * elapsedTime) + (1 - alpha) * acc.y;
-    angleZ = alpha * (angleZ + gyr.z * elapsedTime) + (1 - alpha) * acc.z;
+    // roll pitch yaw
+    float roll = atan2(acc.y, acc.z) * 180 / M_PI;
+    float pitch = atan2(-acc.x, sqrt(acc.y * acc.y + acc.z * acc.z)) * 180 / M_PI;
 
-    get_imu_data()->roll = angleX;
-    get_imu_data()->pitch = angleY;
-    get_imu_data()->yaw = angleZ;
+    get_imu_data()->roll = roll;
+    get_imu_data()->pitch = pitch;
+    // Yaw 是围绕 Z 轴的旋转，通常需要使用磁力计的读数来计算。但是，如果 IMU 不包含磁力计，那么 yaw 通常无法直接计算。在这种情况下，你可能需要使用一种称为陀螺仪积分的方法来估计 yaw。
+    // get_imu_data()->yaw = yaw;
 
     get_imu_data()->temperature = qmi.getTemperature_C();
-    read_imu();
+    // read_imu();
 }
