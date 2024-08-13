@@ -9,10 +9,25 @@ float velocityX = 0, velocityY = 0, velocityZ = 0;
 float positionX = 0, positionY = 0, positionZ = 0;
 unsigned long lastUpdate = 0;
 
+// 设置 NMEA 更新速率为 2Hz
+const char *UBX_CFG_RATE_2HZ =
+    "$PCAS02,500*1A\r\n";
+// 设置 NMEA 更新速率为 5Hz
+const char *UBX_CFG_RATE_5HZ =
+    "$PCAS02,200*1D/r\n";
+
+// 设置 10Hz $PCAS02,100*1E
+const char *UBX_CFG_RATE_10HZ =
+    "$PCAS02,100*1E\r\n";
+
 void setup_gps()
 {
     Serial.println(TinyGPSPlus::libraryVersion());
     gpsSerial.begin(9600);
+    gpsSerial.print(UBX_CFG_RATE_10HZ);
+    Serial.println("GPS Initialize... Please wait.");
+    // 等待几秒让 GPS 模块完成配置
+    delay(3000);
     Serial.println(F("INIT GPS 9600 OK"));
 }
 
