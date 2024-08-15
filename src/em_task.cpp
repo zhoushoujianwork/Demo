@@ -28,7 +28,8 @@ void loop_led(void *pvParameters)
     for (;;) // A Task shall never return or exit.
     {
         loop_led();
-        vTaskDelay(100);
+        Serial.println("----------------------------");
+        vTaskDelay(1000);
     }
 }
 
@@ -111,7 +112,8 @@ void loop_task()
     loop_gps();
 #endif
 #if ENABLE_IMU
-    load_imu();
+    // load_imu();
+    load_imu_kalman();
     // read_imu();
 #endif
 }

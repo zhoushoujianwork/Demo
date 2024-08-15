@@ -5,5 +5,6 @@
 
 void setup_imu();
 void load_imu();
+void load_imu_kalman();
 void read_imu();
 #endif

@@ -24,6 +24,31 @@ SensorQMI8658 qmi;
 IMUdata acc;
 IMUdata gyr;
 
+unsigned long lastTime;
+float vx = 0, vy = 0, vz = 0;
+
+// 通过 IMU 数据实现速度计算
+void speed_cal()
+{
+    // 当前时间
+    unsigned long currentTime = millis();
+    float deltaTime = (currentTime - lastTime) / 1000.0; // 将时间差转换为秒
+    lastTime = currentTime;
+
+    // 简单积分计算速度
+    vx += get_imu_data()->ax * deltaTime;
+    vy += get_imu_data()->ay * deltaTime;
+    vz += get_imu_data()->az * deltaTime;
+
+    // 打印速度值
+    Serial.print("Vx:");
+    Serial.print(vx);
+    Serial.print("Vy:");
+    Serial.print(vy);
+    Serial.print("Vz:");
+    Serial.println(vz);
+}
+
 void setup_imu()
 {
 #ifdef USE_WIRE
@@ -128,31 +153,47 @@ void setup_imu()
 
 void read_imu()
 {
-    Serial.print("Roll: ");
+    Serial.print("ax:");
+    Serial.print(get_imu_data()->ax);
+    Serial.print("\t");
+    Serial.print("ay:");
+    Serial.print(get_imu_data()->ay);
+    Serial.print("\t");
+    Serial.print("az:");
+    Serial.print(get_imu_data()->az);
+    Serial.print("\t");
+    Serial.print("Roll:");
     Serial.print(get_imu_data()->roll);
-    Serial.print(", Pitch: ");
+    Serial.print("\t");
+    Serial.print("Pitch:");
     Serial.print(get_imu_data()->pitch);
-    Serial.print(", Yaw: ");
+    Serial.print("\t");
+    Serial.print("Yaw:");
     Serial.print(get_imu_data()->yaw);
-
-    // imu 温度
-    Serial.print(", Temperature: ");
+    Serial.print("\t");
+    Serial.print("Temperature:");
     Serial.print(get_imu_data()->temperature);
     Serial.println("");
 }
 
+// 互补滤波实现
+#define ALPHA 0.98 // 互补滤波的系数，范围在0到1之间
+float dt = 0.01;   // 时间间隔，单位是秒（假设采样率为100Hz）
+float roll_gyro = 0.0;
+float pitch_gyro = 0.0;
+
 void load_imu()
 {
+    // speed_cal();
 
     if (qmi.getDataReady())
     {
-
         if (qmi.getAccelerometer(acc.x, acc.y, acc.z))
         {
             get_imu_data()->ax = acc.x;
             get_imu_data()->ay = acc.y;
             get_imu_data()->az = acc.z;
-            // Serial.printf("acc:%f,%f,%f\t", acc.x, acc.y, acc.z);
+            // Serial.printf("acc:%f,%f,%f\t"acc.x, acc.y, acc.z);
         }
 
         if (qmi.getGyroscope(gyr.x, gyr.y, gyr.z))
@@ -160,18 +201,134 @@ void load_imu()
             get_imu_data()->gx = gyr.x;
             get_imu_data()->gy = gyr.y;
             get_imu_data()->gz = gyr.z;
-            // Serial.printf("gyr:%f,%f,%f\t", gyr.x, gyr.y, gyr.z);
+            // Serial.printf("gyr:%f,%f,%f\t"gyr.x, gyr.y, gyr.z);
         }
+
+        // 计算加速度计的Roll和Pitch
+        float roll_acc = atan2(acc.y, acc.z) * 180 / M_PI;
+        float pitch_acc = atan2(-acc.x, sqrt(acc.y * acc.y + acc.z * acc.z)) * 180 / M_PI;
+
+        // 角速度转换为角度增量
+        float roll_gyro_delta = gyr.x * dt;
+        float pitch_gyro_delta = gyr.y * dt;
+
+        // 计算通过积分得到的Roll和Pitch（仅使用陀螺仪数据）
+        roll_gyro += roll_gyro_delta;
+        pitch_gyro += pitch_gyro_delta;
+
+        // 使用互补滤波器结合加速度计和陀螺仪的数据
+        get_imu_data()->roll = ALPHA * (roll_gyro) + (1.0 - ALPHA) * roll_acc;
+        get_imu_data()->pitch = ALPHA * (pitch_gyro) + (1.0 - ALPHA) * pitch_acc;
+
+        // QMI事件的温度数据
+        get_imu_data()->temperature = qmi.getTemperature_C();
+        // read_imu();
     }
-    // roll pitch yaw
-    float roll = atan2(acc.y, acc.z) * 180 / M_PI;
-    float pitch = atan2(-acc.x, sqrt(acc.y * acc.y + acc.z * acc.z)) * 180 / M_PI;
+}
 
-    get_imu_data()->roll = roll;
-    get_imu_data()->pitch = pitch;
-    // Yaw 是围绕 Z 轴的旋转，通常需要使用磁力计的读数来计算。但是，如果 IMU 不包含磁力计，那么 yaw 通常无法直接计算。在这种情况下，你可能需要使用一种称为陀螺仪积分的方法来估计 yaw。
-    // get_imu_data()->yaw = yaw;
+struct KalmanFilter
+{
+    float q; // 过程噪声协方差
+    float r; // 测量噪声协方差
+    float x; // 估计值
+    float p; // 估计误差协方差
+    float k; // 卡尔曼增益
+};
 
-    get_imu_data()->temperature = qmi.getTemperature_C();
-    // read_imu();
+// 定义加速度计三个轴的卡尔曼滤波器实例
+KalmanFilter kf_ax = {0.001, 0.1, 0, 1, 0};
+KalmanFilter kf_ay = {0.001, 0.1, 0, 1, 0};
+KalmanFilter kf_az = {0.001, 0.1, 0, 1, 0};
+
+// 定义姿态估计的卡尔曼滤波器实例
+struct AttitudeKalmanFilter
+{
+    float qAngle;
+    float qBias;
+    float rMeasure;
+    float angle;
+    float bias;
+    float rate;
+    float P[2][2];
+};
+
+AttitudeKalmanFilter kalmanRoll = {0.001, 0.003, 0.03, 0, 0, 0, {{1, 0}, {0, 1}}};
+AttitudeKalmanFilter kalmanPitch = {0.001, 0.003, 0.03, 0, 0, 0, {{1, 0}, {0, 1}}};
+
+float kalmanUpdate(KalmanFilter &kf, float measurement)
+{
+    // 预测
+    kf.p += kf.q;
+
+    // 更新
+    kf.k = kf.p / (kf.p + kf.r);
+    kf.x += kf.k * (measurement - kf.x);
+    kf.p *= (1 - kf.k);
+
+    return kf.x;
+}
+
+float kalmanUpdate(AttitudeKalmanFilter &kf, float newAngle, float newRate, float dt)
+{
+    // Predict
+    kf.rate = newRate - kf.bias;
+    kf.angle += dt * kf.rate;
+
+    kf.P[0][0] += dt * (dt * kf.P[1][1] - kf.P[0][1] - kf.P[1][0] + kf.qAngle);
+    kf.P[0][1] -= dt * kf.P[1][1];
+    kf.P[1][0] -= dt * kf.P[1][1];
+    kf.P[1][1] += kf.qBias * dt;
+
+    // Update
+    float S = kf.P[0][0] + kf.rMeasure;
+    float K[2];
+    K[0] = kf.P[0][0] / S;
+    K[1] = kf.P[1][0] / S;
+
+    float y = newAngle - kf.angle;
+    kf.angle += K[0] * y;
+    kf.bias += K[1] * y;
+
+    float P00_temp = kf.P[0][0];
+    float P01_temp = kf.P[0][1];
+
+    kf.P[0][0] -= K[0] * P00_temp;
+    kf.P[0][1] -= K[0] * P01_temp;
+    kf.P[1][0] -= K[1] * P00_temp;
+    kf.P[1][1] -= K[1] * P01_temp;
+
+    return kf.angle;
+}
+// 卡尔曼滤波实现
+void load_imu_kalman()
+{
+    if (qmi.getDataReady())
+    {
+        if (qmi.getAccelerometer(acc.x, acc.y, acc.z))
+        {
+            // 使用卡尔曼滤波器对加速度计测量值进行平滑处理
+            get_imu_data()->ax = kalmanUpdate(kf_ax, acc.x);
+            get_imu_data()->ay = kalmanUpdate(kf_ay, acc.y);
+            get_imu_data()->az = kalmanUpdate(kf_az, acc.z);
+        }
+
+        if (qmi.getGyroscope(gyr.x, gyr.y, gyr.z))
+        {
+            get_imu_data()->gx = gyr.x;
+            get_imu_data()->gy = gyr.y;
+            get_imu_data()->gz = gyr.z;
+        }
+
+        float dt = 0.01; // 假设采样率为100Hz
+
+        // 计算加速度计的Roll和Pitch
+        float roll_acc = atan2(acc.y, acc.z) * 180 / M_PI;
+        float pitch_acc = atan2(-acc.x, sqrt(acc.y * acc.y + acc.z * acc.z)) * 180 / M_PI;
+
+        // 使用卡尔曼滤波
+        get_imu_data()->roll = kalmanUpdate(kalmanRoll, roll_acc, gyr.x, dt);
+        get_imu_data()->pitch = kalmanUpdate(kalmanPitch, pitch_acc, gyr.y, dt);
+
+        get_imu_data()->temperature = qmi.getTemperature_C();
+    }
 }
