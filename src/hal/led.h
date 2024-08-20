@@ -2,6 +2,7 @@
 #define _LED_H_
 #include "em_config.h"
 #include "hal/em_hal.h"
+#include "hal/ble.h"
 typedef enum
 {
     LED_CONNECT = 0,

@@ -11,7 +11,7 @@
 // #define PIN_BAT_BIT 12 // ADC采样次数 0-4095
 
 #define ENABLE_GPS 1
-#define ENABLE_IMU 1
+#define ENABLE_IMU 0
 #define ENABLE_BLE 1
 
 // 定义IMU模块的引脚

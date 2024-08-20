@@ -28,7 +28,6 @@ class bleServerCallbacks : public BLEServerCallbacks
         bleConnected = true;
         packcount = 0;
         Serial.println("现在有设备接入~");
-        run_led(LED_CONNECT);
     }
 
     void onDisconnect(BLEServer *pServer)
@@ -38,7 +37,6 @@ class bleServerCallbacks : public BLEServerCallbacks
         // 在有设备接入后Advertising广播会被停止，所以要在设备断开连接时重新开启广播
         // 不然的话只有重启ESP32后才能重新搜索到
         pServer->startAdvertising(); // 该行效果同 BLEDevice::startAdvertising();
-        run_led(LED_DISCONNECT);
     }
 };
 

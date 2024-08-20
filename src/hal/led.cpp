@@ -12,7 +12,7 @@
 void run_led(led_type_e type)
 {
   // debug
-  Serial.printf("run_led %d\n", type);
+  // Serial.printf("run_led %d\n", type);
 
   switch (type)
   {
@@ -40,10 +40,17 @@ void run_led(led_type_e type)
     break;
   case LED_CONNECT:
     Serial.println("LED_CONNECT");
+    digitalWrite(LedPin, HIGH);
+    delay(200);
     digitalWrite(LedPin, LOW);
+    delay(100);
+    digitalWrite(LedPin, HIGH);
+    delay(100);
+    digitalWrite(LedPin, LOW);
+    delay(100);
+    digitalWrite(LedPin, HIGH);
     break;
   case LED_DISCONNECT:
-    Serial.println("LED_DISCONNECT");
     digitalWrite(LedPin, HIGH);
     break;
   case LED_ERROR:
@@ -82,4 +89,12 @@ void setup_led()
 
 void loop_led()
 {
+  if (get_ble_connect())
+  {
+    run_led(LED_CONNECT);
+  }
+  else
+  {
+    run_led(LED_DISCONNECT);
+  }
 }

@@ -1,4 +1,4 @@
-#include "em_config.h"
+#include "hal/btn.h"
 
 bool btn_state = false;          // 按键状态
 bool long_press_start = false;   // 是否已经开始长按
@@ -44,6 +44,7 @@ void check_btn()
                 {
                     Serial.println("long press");
                     long_press_start = true;
+                    // change_gps_baudrate();
                 }
             }
         }

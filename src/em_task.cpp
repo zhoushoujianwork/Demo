@@ -28,7 +28,7 @@ void loop_led(void *pvParameters)
     for (;;) // A Task shall never return or exit.
     {
         loop_led();
-        Serial.println("----------------------------");
+        Serial.print("----------------------------");
         vTaskDelay(1000);
     }
 }
