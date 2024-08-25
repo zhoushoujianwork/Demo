@@ -159,11 +159,12 @@ void loop_gps()
 {
     while (gpsSerial.available() > 0)
     {
-        Serial.print((char)gpsSerial.read());
+        // Serial.print((char)gpsSerial.read());
         gps.encode(gpsSerial.read());
     }
 
     if (gps.location.isValid())
+
     {
         get_gps_data()->lat = gps.location.lat();
         get_gps_data()->lng = gps.location.lng();

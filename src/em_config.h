@@ -15,8 +15,8 @@
 #define ENABLE_BLE 1
 
 // 定义IMU模块的引脚
-#define PIN_IMU_SDA 21 // IMU模块接入 I2C SDA
-#define PIN_IMU_SCL 22 // IMU模块 I2C SCL
+#define SENSOR_SDA 21 // IMU模块接入 I2C SDA
+#define SENSOR_SCL 22 // IMU模块 I2C SCL
 
 // 定义GPS模块的引脚
 #define PIN_GPS_RX 23 // GPS模块RX
