@@ -107,13 +107,13 @@ String calculateChecksum(String sentence)
 void setup_gps()
 {
     Serial.println(TinyGPSPlus::libraryVersion());
-    gpsSerial.begin(9600);
+    gpsSerial.begin(115200);
 
     // 重新设置波特率
-    gpsSerial.print(UBX_CFG_PRT_115200);
+    gpsSerial.print(UBX_CFG_PRT_9600);
     Serial.println("GPS Initialize... Please wait.");
     delay(3000);
-    gpsSerial.begin(115200);
+    // gpsSerial.begin(115200);
     gpsSerial.print(UBX_CFG_PRT_ALL);
     gpsSerial.print(UBX_CFG_RATE_5HZ);
     gpsSerial.print("$PCAS06,0*1B"); // 查询设备信息 $PCAS06,0*1B
