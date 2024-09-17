@@ -2,6 +2,7 @@
     "files.associations": {
         "string": "cpp",
         "random": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "*.tpp": "cpp"
     }
 }

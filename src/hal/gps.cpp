@@ -108,14 +108,13 @@ void setup_gps()
 {
     Serial.println(TinyGPSPlus::libraryVersion());
     gpsSerial.begin(115200);
-
     // 重新设置波特率
     gpsSerial.print(UBX_CFG_PRT_9600);
     Serial.println("GPS Initialize... Please wait.");
     delay(3000);
-    // gpsSerial.begin(115200);
-    gpsSerial.print(UBX_CFG_PRT_ALL);
-    gpsSerial.print(UBX_CFG_RATE_5HZ);
+    gpsSerial.begin(9600);
+    gpsSerial.print(UBX_CFG_PRT_RMC);
+    gpsSerial.print(UBX_CFG_RATE_2HZ);
     gpsSerial.print("$PCAS06,0*1B"); // 查询设备信息 $PCAS06,0*1B
     // 设置 NMEA 协议
     gpsSerial.print("$PCAS05,5*19");

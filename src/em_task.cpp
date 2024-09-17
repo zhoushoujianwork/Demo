@@ -38,6 +38,11 @@ void loop_btn(void *pvParameters)
     for (;;) // A Task shall never return or exit.
     {
         loop_btn();
+#if ENABLE_IMU
+        // load_imu();
+        load_imu_kalman();
+        // read_imu();
+#endif
         vTaskDelay(10);
     }
 }
@@ -110,10 +115,5 @@ void loop_task()
 {
 #if ENABLE_GPS
     loop_gps();
-#endif
-#if ENABLE_IMU
-    // load_imu();
-    load_imu_kalman();
-    // read_imu();
 #endif
 }
