@@ -98,14 +98,14 @@ void init_task()
         1,          // 任务优先级, with 3 (configMAX_PRIORITIES - 1) 是最高的，0是最低的.
         NULL        // 任务句柄
     );
-    xTaskCreate(
-        task_report,  // 任务函数
-        "TaskReport", // 任务名
-        1024 * 10,    // 任务栈
-        NULL,         // 任务参数
-        1,            // 任务优先级, with 3 (configMAX_PRIORITIES - 1) 是最高的，0是最低的.
-        NULL          // 任务句柄
-    );
+    // xTaskCreate(
+    //     task_report,  // 任务函数
+    //     "TaskReport", // 任务名
+    //     1024 * 10,    // 任务栈
+    //     NULL,         // 任务参数
+    //     1,            // 任务优先级, with 3 (configMAX_PRIORITIES - 1) 是最高的，0是最低的.
+    //     NULL          // 任务句柄
+    // );
 
     run_led(LED_BLINK);
     Serial.println("init_task ok");

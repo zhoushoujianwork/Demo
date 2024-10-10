@@ -319,7 +319,8 @@ void load_imu_kalman()
             get_imu_data()->gz = gyr.z;
         }
 
-        float dt = 0.01; // 假设采样率为100Hz
+        // float dt = 0.01; // 假设采样率为100Hz
+        float dt = 0.1; // 假设采样率为10Hz
 
         // 计算加速度计的Roll和Pitch
         float roll_acc = atan2(acc.y, acc.z) * 180 / M_PI;
